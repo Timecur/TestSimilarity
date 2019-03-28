@@ -1,4 +1,4 @@
-#include "TestSimilarity.h"
+#include "TextSimilarity.h"
 #include <fstream>
 #include <cassert>
 #include <string>
@@ -16,9 +16,9 @@ using namespace std;
 
 int main() {
 
-	TestSimilarity test("dict");
-	TestSimilarity::wordFreq exWF1;
-	TestSimilarity::wordFreq exWF2;
+	TextSimilarity test("dict");
+	TextSimilarity::wordFreq exWF1;
+	TextSimilarity::wordFreq exWF2;
 
 	exWF1 = test.getWordFreq("example1.txt");
 	exWF2 = test.getWordFreq("example2.txt");
@@ -40,33 +40,7 @@ int main() {
 	}
 	cout << endl;
 
-	/*
-	TestSimilarity::wordFreq::const_iterator map_it;
-	for (map_it = wf.begin(); map_it != wf.end(); map_it++)
-	{
-		cout << "(\"" << test.UTF8ToGBK(map_it->first) << "\"," << map_it->second << ")" << endl;
-	}
-	*/
-
-	/*
-	TestSimilarity::wordSet wSet1;
-	TestSimilarity::wordSet wSet2;
-
-	test.selectAimWords(wfVec1, wSet1);
-	cout << "wSet1:" << endl;
-	for (const auto& e : wSet1){
-		cout << test.UTF8ToGBK(e) << ", ";
-	}
-	cout << endl;
-	
-	test.selectAimWords(wfVec2, wSet2);
-	cout << "wSet2:" << endl;
-	for (const auto& e : wSet2){
-		cout << test.UTF8ToGBK(e) << ", ";
-	}
-	cout << endl;
-	*/
-	TestSimilarity::wordSet wSet;
+	TextSimilarity::wordSet wSet;
 
 	test.selectAimWords(wfVec1, wSet);
 	cout << "wSet:" << endl;
@@ -95,7 +69,7 @@ int main() {
 
 	double db = 0;
 	db = test.cosine(exVec1, exVec2);
-	cout << "ÎÄ±¾ÏàËÆ¶ÈÎª£º" << db << endl;
+	cout << "æ–‡æœ¬ç›¸ä¼¼åº¦ä¸ºï¼š" << db << endl;
 
 
 	return 0;
