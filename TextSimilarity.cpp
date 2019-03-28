@@ -1,11 +1,11 @@
-#include "TestSimilarity.h"
+#include "TextSimilarity.h"
 #include <iostream>
 #include <Windows.h>
 
 
 using namespace std;
 
-TestSimilarity::TestSimilarity(string dict)
+TextSimilarity::TextSimilarity(string dict)
 	:DICT(dict)
 	 ,DICT_PATH(dict+"/jieba.dict.utf8")
 	 ,HMM_PATH(dict+"/hmm_model.utf8")
@@ -19,14 +19,14 @@ TestSimilarity::TestSimilarity(string dict)
            STOP_WORD_PATH)
 	 , _maxWordNumber(10)
 {	
-	// »ñÈ¡Í£ÓÃ´Ê±í
+	// è·å–åœç”¨è¯è¡¨
 	getStopWordTable(STOP_WORD_PATH.c_str());
 }
 
-string TestSimilarity::GBKToUTF8(std::string str){
+string TextSimilarity::GBKToUTF8(std::string str){
 
 	// UTF8 -> UTF16
-	// ·µ»ØËùĞèÒªbuffer´óĞ¡
+	// è¿”å›æ‰€éœ€è¦bufferå¤§å°
 	int len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
 	wchar_t* wstr = new wchar_t[len + 1];
 	memset(wstr, 0, len + 1);
@@ -50,10 +50,10 @@ string TestSimilarity::GBKToUTF8(std::string str){
 	return strtmp;
 }
 
-string TestSimilarity::UTF8ToGBK(std::string str){
+string TextSimilarity::UTF8ToGBK(std::string str){
 
 	// UTF8 -> UTF16
-	// ·µ»ØËùĞèÒªbuffer´óĞ¡
+	// è¿”å›æ‰€éœ€è¦bufferå¤§å°
 	int len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
 	wchar_t* wstr = new wchar_t[len + 1];
 	memset(wstr, 0, len + 1);
@@ -77,15 +77,15 @@ string TestSimilarity::UTF8ToGBK(std::string str){
 	return strtmp;
 }
 
-TestSimilarity::wordFreq TestSimilarity::getWordFreq(const char* file){
+TestSimilarity::wordFreq TextSimilarity::getWordFreq(const char* file){
 
 	
 	string s;
 	vector<string> words;
     wordFreq wf;
 
-	ifstream infile; // ifstream ¶ÁÈ¡ÎÄ¼ş£¨ofstream Ğ´ÈëÎÄ¼ş£©
-	infile.open(file);  // ²»¼Ó´ò¿ª·½Ê½Ä¬ÈÏ in´ò¿ª
+	ifstream infile; // ifstream è¯»å–æ–‡ä»¶ï¼ˆofstream å†™å…¥æ–‡ä»¶ï¼‰
+	infile.open(file);  // ä¸åŠ æ‰“å¼€æ–¹å¼é»˜è®¤ inæ‰“å¼€
 	assert(infile.is_open());
 
 
@@ -93,29 +93,8 @@ TestSimilarity::wordFreq TestSimilarity::getWordFreq(const char* file){
 
 		s = GBKToUTF8(s);
 		
-		// jieba·Ö´Ê
+		// jiebaåˆ†è¯
 		_jieba.Cut(s, words, false);
-	
-		// È¥³ıÍ£ÓÃ´Ê
-		//for (int i = 0; i < words.size(); i++){
-		//	
-		//	// count>0±íÊ¾ ¸Ã´ÊÔÚÍ£ÓÃ´Ê±íÖĞ³öÏÖ¹ı
-		//	if (_stopWordSet.count(words[i]) > 0){
-		//		continue;
-		//	}
-		//	// ²»ÊÇÍ£ÓÃ´ÊÔò¶ÔÓ¦´ÊÆµ++
-		//	else{
-		//		if (wf.count(words[i]) > 0){
-		//			wf[words[i]]++;
-		//		}
-		//		else
-		//		{
-		//			wf[words[i]] = 1;
-		//		}
-		//		//wf[words[i]]++;
-		//	}
-
-		//}
 
 		for (const auto& e : words){
 			if (_stopWordSet.count(e)){
@@ -139,7 +118,7 @@ TestSimilarity::wordFreq TestSimilarity::getWordFreq(const char* file){
 	return wf;
 }
 
-void TestSimilarity::getStopWordTable(const char* stopWordFile){
+void TextSimilarity::getStopWordTable(const char* stopWordFile){
 	
 	ifstream infile;
 	string line;
@@ -162,16 +141,16 @@ bool cmpReverse(pair<string, int> lp, pair<string, int> rp){
 	return lp.second > rp.second;
 }
 
-// ´ÊÆµÅÅĞò
-vector<pair<string, int>> TestSimilarity::sortByValueReverse(wordFreq& wf){
+// è¯é¢‘æ’åº
+vector<pair<string, int>> TextSimilarity::sortByValueReverse(wordFreq& wf){
 
 	vector<pair<string, int>>wfvector(wf.begin(), wf.end());
 	sort(wfvector.begin(), wfvector.end(),cmpReverse);
 	return wfvector;
 }
 
-// Ñ¡Ôñ²»ÖØ¸´µÄ´Ê
-void TestSimilarity::selectAimWords(vector<pair<string, int>>& wfvec, wordSet& wset){
+// é€‰æ‹©ä¸é‡å¤çš„è¯
+void TextSimilarity::selectAimWords(vector<pair<string, int>>& wfvec, wordSet& wset){
 	
 	int len = wfvec.size();
 	int sz = len > _maxWordNumber ? _maxWordNumber : len;
@@ -180,8 +159,8 @@ void TestSimilarity::selectAimWords(vector<pair<string, int>>& wfvec, wordSet& w
 	}
 }
 
-// »ñÈ¡ÏòÁ¿
-vector<double> TestSimilarity::getOneHot(wordSet& wset, wordFreq& wf){
+// è·å–å‘é‡
+vector<double> TextSimilarity::getOneHot(wordSet& wset, wordFreq& wf){
 
 	vector<double> exVec;
 	for (const auto& e : wset){
@@ -195,8 +174,8 @@ vector<double> TestSimilarity::getOneHot(wordSet& wset, wordFreq& wf){
 	return exVec;
 }
 
-// ¼ÆËãÏàËÆ¶È
-double TestSimilarity::cosine(vector<double> oneHot1, vector<double> oneHot2){
+// è®¡ç®—ç›¸ä¼¼åº¦
+double TextSimilarity::cosine(vector<double> oneHot1, vector<double> oneHot2){
 
 	double modular1 = 0, modular2 = 0;
 	double products = 0;
